@@ -26,6 +26,7 @@ master-unified-pipeline/
 ├── pattern_extraction.md          # strongest patterns from each of the 10
 ├── unified_architecture.md        # full architecture of ARSENAL
 ├── search_family_map.md           # ToT vs LATS (L3) + APE vs OPRO (L1) + Voyager memory
+├── CONSTITUTION.md              # universal reusable prompt dossier
 ├── prompts_complete.md            # master prompt library
 ├── python_logic_flow_complete.md  # full logic / loops / decisions
 ├── python_logic_inventory.json
@@ -120,3 +121,9 @@ master-unified-pipeline/
 | APE | https://github.com/faresrafat3/ape-full-extraction |
 | Prompt Report | https://github.com/faresrafat3/prompt-report-full-extraction |
 | Consolidated | https://github.com/faresrafat3/llm-agent-research-extractions |
+
+## Constitution
+
+Universal, domain-agnostic prompts distilled from all extracted systems:
+
+→ [`CONSTITUTION.md`](./CONSTITUTION.md)
