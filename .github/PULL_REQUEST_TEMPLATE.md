@@ -1,25 +1,22 @@
-## Description
-<!-- Please include a summary of the change and which issue is fixed. Include relevant motivation and context. -->
+## Objective
+<!-- Describe the specific goal of this PR. Which LLM framework or logic flow are you updating/fixing? -->
 
-Fixes # (issue)
+## Pipeline Impact (Check the affected layers)
+- [ ] **L0:** Prompt Report Taxonomy Router
+- [ ] **L1:** Instruction Optimizer (APE / OPRO)
+- [ ] **L2:** Meta-Prompting Conductor
+- [ ] **L3:** Tree Search (ToT / LATS)
+- [ ] **L4:** Self-Refine Loop
+- [ ] **L5:** Episodic Memory (Reflexion / Voyager)
+- [ ] **L6:** Writeup/Evaluation Wrap-up (AI Scientist)
 
-## Type of change
-<!-- Please delete options that are not relevant. -->
-- [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
-- [ ] ✨ New feature (non-breaking change which adds functionality)
-- [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] 📝 Documentation update
-- [ ] 🚀 Performance/Cost Optimization (e.g., token reduction)
+## Prompt Engineering Checklist
+<!-- If you modified prompts, check the following: -->
+- [ ] Did you abstract the prompt instead of hardcoding it?
+- [ ] Is `CONSTITUTION.md` updated if this adds a universal rule?
+- [ ] Have you tested for prompt injection or context-window bloat?
 
-## Architecture Impact
-<!-- For AI/Agent repos: Does this change the prompt flow, the decision tree, or the orchestration logic? -->
-- [ ] Yes
-- [ ] No
-
-## Checklist:
-- [ ] My code follows the style guidelines of this project
-- [ ] I have performed a self-review of my own code
-- [ ] I have commented my code, particularly in hard-to-understand areas (like prompt engineering logic)
-- [ ] I have made corresponding changes to the documentation
-- [ ] My changes generate no new warnings/errors in the CI pipeline
-- [ ] I have added tests that prove my fix is effective or that my feature works
+## Architectural Integrity
+- [ ] I have updated the `python_logic_inventory.json` if I added new functions.
+- [ ] I have updated the Mermaid graphs (`graphs/`) to reflect any routing changes.
+- [ ] This change maintains the modularity of the pipeline (does not create a monolith).
