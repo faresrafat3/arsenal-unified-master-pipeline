@@ -1,51 +1,34 @@
-# Contributing to Fares Rafat's AI Systems
+# Contributing to ARSENAL
 
-First off, thank you for considering contributing! We are building advanced, cost-aware LLM agent systems and intelligence aggregators. Contributions from the community ensure these architectures remain robust, open, and at the bleeding edge.
+First off, thank you for considering contributing to the **ARSENAL Unified Master Pipeline**. 
+Because this repository represents a highly intricate fusion of 10 different LLM agent frameworks (from APE and OPRO to LATS and AI Scientist v2), contributions must follow strict architectural guidelines to ensure we don't break the cognitive flow.
 
-## 🧠 What we are looking for:
-- **Bug Fixes:** Fixing broken flows, outdated API calls, or dependency issues.
-- **New LEGO Pieces (AI Earth):** Adding new logical flows from recent SOTA AI papers.
-- **Pipeline Optimizations (ARSENAL):** Enhancing prompt performance, reducing token cost, or refining the multi-agent orchestration.
-- **Documentation:** Translating concepts, fixing typos, or improving the Mermaid graphs.
+## 🏗️ Architectural Guidelines for Contributions
 
-## 🚀 How to Contribute
+When modifying the pipeline, you must identify which layer (L0-L6) your PR affects:
+1. **L0 (Router):** Prompt Report Taxonomy.
+2. **L1 (Optimizer):** APE / OPRO instruction tuning.
+3. **L2 (Conductor):** Meta-Prompting expert dispatch.
+4. **L3 (Search/Reasoning):** ToT / LATS node expansions.
+5. **L4 (Refinement):** Self-Refine loops.
+6. **L5 (Memory):** Reflexion / Voyager skill saving.
+7. **L6 (Staging):** AI Scientist v2 progressive evaluation.
 
-### 1. Fork and Clone
-Fork the repository to your own GitHub account and then clone it locally.
-```bash
-git clone https://github.com/YOUR-USERNAME/REPOSITORY-NAME.git
-cd REPOSITORY-NAME
-```
+### Modifying Prompts
+If your contribution modifies core prompts:
+- You **must** update `prompts_complete.md`.
+- Ensure any domain-agnostic principles are synced with `CONSTITUTION.md`.
+- Avoid hardcoding system prompts inside Python logic; they should be abstracted and imported.
 
-### 2. Branching Strategy
-Create a new branch for your feature or bugfix. Please use descriptive names:
-- `feature/new-agent-logic`
-- `fix/router-latency`
-- `docs/arabic-translation`
+### Modifying Logic & Routing
+If you are adding a new technique (e.g., integrating a new paper's logic):
+- Update `python_logic_inventory.json` with the new functional footprint.
+- Ensure the Mermaid graphs (`graphs/MASTER_UNIFIED_ENGLISH.mmd`) accurately reflect the new path.
 
-```bash
-git checkout -b feature/your-feature-name
-```
+## 🧪 Testing Your Changes
+Before submitting a PR, ensure that:
+1. The **Conductor** can successfully dispatch your new tool/expert.
+2. Token usage hasn't exponentially bloated (we are building cost-aware AI).
+3. The Fallback mechanics are intact.
 
-### 3. Making Changes
-- Write clear, concise, and documented code.
-- If you are adding a new AI logic extraction, ensure you cite the original paper.
-- Follow the existing coding style (Python PEP-8, TypeScript standard).
-
-### 4. Testing
-If the repository contains tests (e.g., `pytest`), make sure to run them locally before pushing.
-```bash
-pytest tests/
-```
-
-### 5. Push and Pull Request
-Push your branch to your fork and submit a Pull Request against the `main` branch of this repository.
-```bash
-git push origin feature/your-feature-name
-```
-In your PR description, explain **what** you changed and **why**. If it fixes an open issue, link to it (e.g., "Fixes #12").
-
-## ⚖️ Code of Conduct
-By participating, you are expected to uphold our [Code of Conduct](CODE_OF_CONDUCT.md). We are committed to a harassment-free experience for everyone.
-
-*Built with care — from Cairo to the open web.*
+Please refer to the detailed Pull Request template when submitting your code.
