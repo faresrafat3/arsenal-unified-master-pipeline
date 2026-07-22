@@ -4,7 +4,7 @@ Replaces the user's raw query with a mathematically and logically rigorous
 Meta-Prompt optimized for downstream LLM ingestion.
 """
 from loguru import logger
-from arsenal_ai.core.models import ArsenalConfig, TaskSpec, L1OptimizedPrompt
+from arsenal_ai.core.models import ArsenalConfig, TaskSpec, L1OptimizedPrompt, constitution
 from arsenal_ai.engine.llm import agenerate_structured
 
 class InstructionOptimizer:
@@ -18,6 +18,7 @@ class InstructionOptimizer:
             {
                 "role": "system", 
                 "content": (
+                    f"CRITICAL SYSTEM RULES:\n{constitution.get_rules()}\n\n"
                     "You are an OPRO (Optimization by PROmpting) Agent. Your goal is to take a raw user task and "
                     f"apply the following prompt families: {[f.value for f in families]}. "
                     "Output a highly engineered, robust meta-instruction for downstream AI experts to follow."

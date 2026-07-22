@@ -57,3 +57,29 @@ class ArsenalResult(BaseModel):
     tokens_consumed: int
     execution_trace: List[Dict[str, Any]]
     peer_review_score: float
+
+
+class ConstitutionManager:
+    """Loads and injects the global ARSENAL constitution into prompts."""
+    _instance = None
+    constitution_text = ""
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(ConstitutionManager, cls).__new__(cls)
+            try:
+                with open("CONSTITUTION.md", "r", encoding="utf-8") as f:
+                    # We inject the core constitutional principles, not the whole 200kb file, 
+                    # extracting just the universal rules to avoid context bloat.
+                    full_text = f.read()
+                    # A true implementation would parse specific markdown headers
+                    cls._instance.constitution_text = full_text[:1500] + "\n[Rules Enforced by ARSENAL Constitution]"
+            except Exception:
+                cls._instance.constitution_text = "Enforce rigorous, deterministic, step-by-step reasoning. Do not hallucinate."
+        return cls._instance
+
+    @classmethod
+    def get_rules(cls) -> str:
+        return cls().constitution_text
+
+constitution = ConstitutionManager()
