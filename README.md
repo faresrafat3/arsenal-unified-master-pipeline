@@ -86,3 +86,9 @@ Universal, domain-agnostic prompts distilled from all extracted systems are inje
 <div align="center">
   <em>Built with care — from Cairo to the open web.</em>
 </div>
+
+## 🔒 Security & Safe Execution (E2B Integration)
+ARSENAL prevents "Prompt Injection to RCE" (Remote Code Execution) vulnerabilities by natively supporting **E2B Code Interpreters**. 
+When the `Meta-Conductor` (L2) invokes a coding agent, the code is executed in an ephemeral, isolated cloud container. 
+The agent can safely install packages, analyze data, and read tracebacks without compromising your host architecture.
+*(Requires `E2B_API_KEY` in production).*
