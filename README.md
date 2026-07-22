@@ -1,101 +1,88 @@
 <div align="center">
 
-# ⚙️ ARSENAL: Unified Master LLM Agent Pipeline
+# ⚙️ ARSENAL Unified Master Pipeline (v1.0.0-rc1)
 
-[![LLM-Agents](https://img.shields.io/badge/Architecture-Master_Pipeline-0052CC.svg?style=for-the-badge&logo=openai&logoColor=white)](#)
-[![Python](https://img.shields.io/badge/Python-3.10+-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Production_Ready-brightgreen.svg?style=for-the-badge)](#)
 
 **A**utomatic **R**easoning, **S**earch, **E**valuation, **N**avigation, and **A**daptive **L**earning
 
-**One complete master system that combines the strongest patterns from *ten* state-of-the-art research systems into a single unified operational arsenal.**
+**An Executable, Asynchronous Neuro-Symbolic State Machine that unifies 10 state-of-the-art LLM agent frameworks into a single operational architecture.**
 
 </div>
 
 ---
 
-## 🌟 The 10-System Fusion
+## 🌟 The 2026 SOTA Transformation
+
+ARSENAL is no longer just a theoretical framework or a collection of prompts. It is a **fully executable Python package** powered by `LiteLLM`, `Instructor`, `ChromaDB`, and `AsyncIO`. It actively enforces determinism, runs python code in sandboxes, and dynamically routes LLM execution for maximum cognitive economy.
+
+### 🔥 Architectural Highlights (L0 - L6)
+
+- 🚦 **L0 Semantic Router:** Reads the user query and dynamically toggles heavy reasoning layers to prevent token waste (Cognitive Economy).
+- 🛠️ **L1 Instruction Optimizer (OPRO):** Rewrites your prompt into a highly engineered Meta-Prompt with explicit guardrails against expected failure modes.
+- 🎼 **L2 Meta-Conductor:** Dispatches specialized Expert Personas **concurrently**. Experts execute Python code in a native `Sandbox`, capture `stdout/stderr`, and self-correct via a ReAct loop.
+- 🌳 **L3 Language Agent Tree Search (LATS):** True Monte Carlo Tree Search (MCTS) utilizing an LLM Process Reward Model (PRM) to evaluate, rollback, and optimize thought trajectories.
+- 🛡️ **L4 Adversarial Crucible:** Self-Refine loops that ruthlessly critique drafts and force rewrites until they pass strict logical thresholds.
+- 🧠 **L5 Voyager Memory:** Powered by `ChromaDB`, successful scripts and analytical frameworks are embedded and stored persistently. ARSENAL learns across sessions.
+- 🎓 **L6 AI Scientist v2:** An automated peer-reviewer that grades the final artifact for academic soundness and actionability.
+
+## 🏗️ The 10-System Fusion
 
 We extracted the core logic, prompts, and flows from the top 10 LLM agent frameworks and unified them.
 
-| # | Source System | Paper | What we take for ARSENAL |
-|---|---|---|---|
-| 1 | **AI Scientist v2** | *SakanaAI* | Multi-stage progressive pipeline, BFTS node tree, multi-seed eval, writeup + peer review |
-| 2 | **Self-Refine** | *arXiv:2303.17651* | Generate → Feedback → Refine loop, multi-aspect scoring, history-aware iteration |
-| 3 | **Reflexion** | *arXiv:2303.11366* | Verbal reinforcement, episodic memory, trial-level reflection |
-| 4 | **Meta-Prompting** | *arXiv:2401.12954* | Conductor / expert dispatch, tool experts (Python), intermediate feedback append |
-| 5 | **Tree of Thoughts** | *arXiv:2305.10601* | Classic deliberate tree search: propose/sample × value/vote × BFS beam / DFS prune |
-| 6 | **LATS** | *arXiv:2310.04406* | MCTS + UCT selection, LM value, expansion, rollout, backprop (+ env + reflection) |
-| 7 | **APE** | *arXiv:2211.01910* | One-shot/bandit instruction search, likelihood/UCB ranking, demo functions |
-| 8 | **OPRO** | *arXiv:2309.03409* | Iterative meta-prompt instruction search conditioned on score history |
-| 9 | **Voyager** | *arXiv:2305.16291* | Automatic curriculum, skill library (procedural memory), iterative env-grounded code refine |
-| 10| **Prompt Report** | *arXiv:2406.06608* | 58-technique taxonomy, technique family routing, best-practice selection |
+| # | Source System | How it's Executed in ARSENAL |
+|---|---|---|
+| 1 | **AI Scientist v2** | L6: Progressive peer review & write-up shell |
+| 2 | **Self-Refine** | L4: Crucible rewrite loops based on critique |
+| 3 | **Reflexion** | L5: Episodic failure tracing during MCTS rollouts |
+| 4 | **Meta-Prompting** | L2: Asynchronous Conductor & Expert dispatch |
+| 5 | **Tree of Thoughts** | L3: Beam/UCT search over framings |
+| 6 | **LATS** | L3: PRM-evaluated rollouts and backpropagation |
+| 7 | **APE / OPRO** | L1: Dynamic prompt optimization conditioned on context |
+| 8 | **Voyager** | L5: ChromaDB persistent skill retrieval |
+| 9 | **ReAct** | L2/Tools: Code execution, error observation, and correction |
+| 10| **Prompt Report** | L0: Taxonomy-based architectural routing |
 
-## 🏗️ Architecture Design (How they fuse)
+## 🚀 Getting Started
 
-```mermaid
-graph TD
-    PR[0. PROMPT REPORT ROUTER<br/>Taxonomy Router] --> IO
-    
-    subgraph Core Pipeline
-        IO[1. INSTRUCTION OPTIMIZER<br/>APE & OPRO] --> MP[2. META-PROMPT CONDUCTOR<br/>Task Dispatch]
-        
-        MP -->|Complex Reasoning| TS[3. TREE SEARCH<br/>ToT + LATS]
-        MP -->|Draft Polish| SR[4. SELF-REFINE<br/>Local Polish]
-        MP -->|Memory Update| MEM[5. EPISODIC MEMORY<br/>Reflexion + Voyager]
-        
-        TS --> SR
-        SR --> MEM
-    end
-    
-    MEM --> AI[6. AI SCIENTIST v2 STAGES<br/>Eval & Review Wrap-up]
-    
-    style PR fill:#2d3436,stroke:#fff,color:#fff
-    style IO fill:#0984e3,stroke:#fff,color:#fff
-    style MP fill:#6c5ce7,stroke:#fff,color:#fff
-    style TS fill:#00b894,stroke:#fff,color:#fff
-    style SR fill:#e17055,stroke:#fff,color:#fff
-    style MEM fill:#d63031,stroke:#fff,color:#fff
-    style AI fill:#2d3436,stroke:#fff,color:#fff
+ARSENAL is designed to be imported as the reasoning engine for your downstream SaaS or Research platforms (e.g., `epistemic-forge`).
+
+```bash
+# 1. Install the package
+pip install -e .
+
+# 2. Run a full execution (Requires OPENAI_API_KEY or OPENROUTER_API_KEY)
+export OPENAI_API_KEY="your-key-here"
 ```
 
-### 🧠 Design Principles
-1. **Router first** — Prompt Report taxonomy chooses the technique family before any heavy loop.
-2. **Optimize the instruction** — **APE** (one-shot/bandit) and/or **OPRO** (iterative score-conditioned meta-prompt search).
-3. **Conduct, don't monolith** — Meta-Prompting decomposes work into expert subcalls.
-4. **Search when uncertain** — L3: **ToT** offline baseline; **LATS** interactive/full; cascade when needed.
-5. **Polish every candidate** — Self-Refine (and Voyager-style env critique for code/skills).
-6. **Remember failures and skills** — **Reflexion** verbal episodic memory; **Voyager** skill library + automatic curriculum for open-ended procedural growth.
-7. **Stage the pipeline** — AI Scientist v2 progressive stages wrap everything end-to-end with evaluation, writeup, and review.
+```python
+import asyncio
+from arsenal_ai.core.models import ArsenalConfig, TaskSpec, Modality
+from arsenal_ai.core.orchestrator import ArsenalMasterPipeline
 
-## 📂 Repository Structure & Reading Order
+async def run():
+    config = ArsenalConfig(target_model="openai/gpt-4o-mini")
+    pipeline = ArsenalMasterPipeline(config)
+    
+    task = TaskSpec(
+        task_id="TASK_001",
+        description="Write a Python script that calculates the 10th Fibonacci number in O(log n) time.",
+        modality=Modality.CODE
+    )
+    
+    result = await pipeline.execute(task)
+    print(result.final_artifact)
 
-```text
-master-unified-pipeline/
-├── README.md                      # (You are here)
-├── research_summary.md            # Why this fusion exists
-├── pattern_extraction.md          # Strongest loops & decisions per system
-├── unified_architecture.md        # Full architecture deep-dive
-├── CONSTITUTION.md                # Universal reusable prompt dossier
-├── prompts_complete.md            # Master prompt library
-├── python_logic_flow_complete.md  # Full logic, loops, and operational decisions
-├── python_logic_inventory.json    # Logic map
-├── deep_dive_task_matrix.md       # Phase × function matrix
-├── graphs/                        # Mermaid graphs & visualizations
-│   ├── MASTER_UNIFIED_ENGLISH.md
-│   └── MASTER_UNIFIED_ARABIC.md
-└── archives/
+asyncio.run(run())
 ```
 
 ## 📜 The Constitution
-Universal, domain-agnostic prompts distilled from all extracted systems can be found here:
-**→ [`CONSTITUTION.md`](./CONSTITUTION.md)**
+Universal, domain-agnostic prompts distilled from all extracted systems are injected globally via the `ConstitutionManager`. 
+→ [`CONSTITUTION.md`](./CONSTITUTION.md)
 
-## 🔗 Source Extraction Repositories (All Public)
-This master pipeline is the culmination of deep extractions from individual systems:
-- [AI Scientist v2 Extractions](https://github.com/faresrafat3/ai-scientist-v2-prompts-extraction)
-- [Self-Refine](https://github.com/faresrafat3/self-refine-full-extraction) | [Reflexion](https://github.com/faresrafat3/reflexion-full-extraction) | [Meta-Prompting](https://github.com/faresrafat3/meta-prompting-full-extraction)
-- [Tree of Thoughts](https://github.com/faresrafat3/tot-full-extraction) | [OPRO](https://github.com/faresrafat3/opro-full-extraction) | [Voyager](https://github.com/faresrafat3/voyager-full-extraction)
-- [LATS](https://github.com/faresrafat3/lats-full-extraction) | [APE](https://github.com/faresrafat3/ape-full-extraction) | [Prompt Report](https://github.com/faresrafat3/prompt-report-full-extraction)
-
-**Consolidated Master Archive:** [LLM-Agent Research Extractions](https://github.com/faresrafat3/llm-agent-research-extractions)
+---
+<div align="center">
+  <em>Built with care — from Cairo to the open web.</em>
+</div>

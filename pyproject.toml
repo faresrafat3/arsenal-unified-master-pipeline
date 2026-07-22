@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "arsenal-ai"
-version = "0.1.0-alpha"
+version = "1.0.0-rc1"
 description = "SOTA Unified Master LLM Agent Pipeline (L0-L6 Neuro-Symbolic Orchestrator)"
 readme = "README.md"
 requires-python = ">=3.10"
