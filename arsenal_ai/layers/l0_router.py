@@ -6,6 +6,7 @@ layers (L1-L6) to activate for optimal Cognitive Economy.
 """
 from loguru import logger
 from arsenal_ai.core.models import ArsenalConfig, TaskSpec, L0RouteDecision
+from arsenal_ai.router.taxonomy import PromptTechnique
 from arsenal_ai.engine.llm import agenerate_structured
 
 class TaxonomyRouter:

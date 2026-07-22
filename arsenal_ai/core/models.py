@@ -40,7 +40,7 @@ class TaxonomyFamily(str, Enum):
 class L0RouteDecision(BaseModel):
     """L0 Prompt Report Taxonomy Router Output."""
     complexity_score: float = Field(ge=0.0, le=1.0, description="0.0 = Simple, 1.0 = Highly complex reasoning required.")
-    recommended_families: List[TaxonomyFamily] = Field(description="Technique families from the Prompt Report to apply.")
+    recommended_techniques: List[str] = Field(description="Exact techniques from The Prompt Report to apply (e.g. 'cot', 'cove', 'least_to_most').")
     activate_l3_search: bool = Field(description="True if MCTS/Tree Search is needed.")
     activate_l4_refine: bool = Field(description="True if Adversarial Self-Refine is needed.")
     rationale: str = Field(description="Why this route was chosen.")

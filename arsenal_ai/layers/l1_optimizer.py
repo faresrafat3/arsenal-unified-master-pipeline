@@ -6,12 +6,13 @@ Meta-Prompt optimized for downstream LLM ingestion.
 from loguru import logger
 from arsenal_ai.core.models import ArsenalConfig, TaskSpec, L1OptimizedPrompt, constitution
 from arsenal_ai.engine.llm import agenerate_structured
+from arsenal_ai.router.taxonomy import get_taxonomy_templates
 
 class InstructionOptimizer:
     def __init__(self, config: ArsenalConfig):
         self.config = config
 
-    async def optimize(self, task: TaskSpec, families: list) -> L1OptimizedPrompt:
+    async def optimize(self, task: TaskSpec, techniques: list) -> L1OptimizedPrompt:
         logger.info("🛠️ [L1 Optimizer] Engaging OPRO to forge optimal meta-prompt...")
         
         messages = [
@@ -20,8 +21,9 @@ class InstructionOptimizer:
                 "content": (
                     f"CRITICAL SYSTEM RULES:\n{constitution.get_rules()}\n\n"
                     "You are an OPRO (Optimization by PROmpting) Agent. Your goal is to take a raw user task and "
-                    f"apply the following prompt families: {[f.value for f in families]}. "
-                    "Output a highly engineered, robust meta-instruction for downstream AI experts to follow."
+                    "rewrite it into a highly engineered, robust meta-instruction for downstream AI experts.\n\n"
+                    f"{get_taxonomy_templates(techniques)}\n"
+                    "You MUST rigidly enforce the requested techniques in your final output instruction."
                 )
             },
             {"role": "user", "content": f"Raw Task: {task.description}\nConstraints: {task.constraints}"}
