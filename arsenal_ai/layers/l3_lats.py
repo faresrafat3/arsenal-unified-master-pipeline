@@ -1,101 +1,103 @@
-"""L3: Language Agent Tree Search (LATS) Engine.
+"""L3: Language Agent Tree Search (LATS) Engine with Environment Feedback.
 
-TRUE MCTS Implementation:
-1. Selection (UCT formulation)
-2. Expansion
-3. Simulation (Rollout)
-4. Backpropagation (Value updates)
+TRUE LATS Implementation:
+Unlike naive Tree of Thoughts which only uses an LLM-as-a-judge, 
+LATS executes the proposed actions in the Environment (Python Sandbox), 
+and the PRM evaluates the *Environment Response* (stdout/traceback) 
+to calculate the reward score. This grounds the search in reality.
 """
 from pydantic import BaseModel, Field
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 import asyncio
-import math
 from loguru import logger
 from arsenal_ai.engine.llm import agenerate_structured
-from arsenal_ai.core.models import ArsenalConfig, constitution
+from arsenal_ai.core.models import ArsenalConfig
+from arsenal_ai.tools.executor import CodeSandbox
 
 class LatsNodeEvaluation(BaseModel):
-    reward_score: float = Field(ge=0.0, le=1.0)
-    critique_reasoning: str
-    is_terminal: bool
+    """PRM Evaluation Schema for LATS Node."""
+    reward_score: float = Field(ge=0.0, le=1.0, description="Score based on both logic and environment execution success.")
+    critique_reasoning: str = Field(description="Why this step succeeded or failed based on the sandbox output.")
+    is_terminal: bool = Field(description="Does this step solve the ultimate goal without errors?")
+
+class LatsAction(BaseModel):
+    reasoning: str = Field(description="Step-by-step logic.")
+    python_code_to_execute: Optional[str] = Field(default=None, description="Code to test this branch.")
 
 class LatsNodeExpansion(BaseModel):
-    proposed_actions: List[str]
-
-class MCTSNode:
-    def __init__(self, state: str, parent=None, action=None):
-        self.state = state
-        self.parent = parent
-        self.action = action
-        self.children: List['MCTSNode'] = []
-        self.visits = 0
-        self.value = 0.0
-        self.is_terminal = False
-
-    def uct_score(self, exploration_weight: float = 1.414) -> float:
-        if self.visits == 0:
-            return float('inf')
-        return (self.value / self.visits) + exploration_weight * math.sqrt(math.log(self.parent.visits) / self.visits)
+    proposed_actions: List[LatsAction]
 
 class LatsEngine:
     def __init__(self, config: ArsenalConfig):
         self.config = config
 
-    async def _expand(self, node: MCTSNode) -> None:
+    async def _expand_node(self, current_state: str, max_branches: int = 3) -> List[LatsAction]:
+        """Propose novel branches from the current state, writing executable code."""
         messages = [
-            {"role": "system", "content": f"LATS Expansion.\\n{constitution.get_rules()}\\nPropose 3 distinct next logical steps."},
-            {"role": "user", "content": f"Current State: {node.state}"}
+            {"role": "system", "content": f"You are the LATS Expansion module. Propose {max_branches} distinct actions to advance the current state. If code is needed, provide 'python_code_to_execute'."},
+            {"role": "user", "content": f"Current State: {current_state}"}
         ]
-        res: LatsNodeExpansion = await agenerate_structured(messages, LatsNodeExpansion, self.config.target_model, self.config.temperature, self.config.api_base, self.config.api_key)
-        for action in res.proposed_actions:
-            new_state = node.state + f"\\nAction: {action}"
-            node.children.append(MCTSNode(state=new_state, parent=node, action=action))
+        res: LatsNodeExpansion = await agenerate_structured(
+            messages=messages, 
+            response_model=LatsNodeExpansion, 
+            model=self.config.target_model,
+            api_base=self.config.api_base,
+            api_key=self.config.api_key
+        )
+        return res.proposed_actions[:max_branches]
 
-    async def _simulate(self, node: MCTSNode) -> float:
-        """Rollout value estimation."""
+    async def _simulate_and_evaluate(self, action: LatsAction) -> LatsNodeEvaluation:
+        """Executes the action in the Sandbox FIRST, then scores the output."""
+        execution_logs = "No execution attempted."
+        
+        # 1. Environment Interaction (The defining feature of LATS)
+        if action.python_code_to_execute:
+            logger.debug("🌳 [LATS] Executing node trajectory in Sandbox...")
+            sandbox_res = CodeSandbox.execute(action.python_code_to_execute)
+            if sandbox_res["success"]:
+                execution_logs = f"SUCCESS Output:\n{sandbox_res['output']}"
+            else:
+                execution_logs = f"FAILURE Traceback:\n{sandbox_res['error']}"
+
+        # 2. LLM-as-a-Judge Evaluation of the Environment Feedback
         messages = [
-            {"role": "system", "content": f"LATS Value Function.\\n{constitution.get_rules()}\\nEvaluate the success probability of this trajectory (0.0 to 1.0)."},
-            {"role": "user", "content": f"Trajectory: {node.state}"}
+            {"role": "system", "content": "You are the LATS Value Function (PRM). Score the proposed action based on its reasoning and the actual Sandbox Execution logs."},
+            {"role": "user", "content": f"Reasoning: {action.reasoning}\n\nSandbox Logs:\n{execution_logs}"}
         ]
-        try:
-            res: LatsNodeEvaluation = await agenerate_structured(messages, LatsNodeEvaluation, self.config.target_model, self.config.temperature, self.config.api_base, self.config.api_key)
-            node.is_terminal = res.is_terminal
-            return res.reward_score
-        except Exception:
-            return 0.5
+        
+        return await agenerate_structured(
+            messages=messages, 
+            response_model=LatsNodeEvaluation, 
+            model=self.config.target_model,
+            api_base=self.config.api_base,
+            api_key=self.config.api_key
+        )
 
-    def _backpropagate(self, node: MCTSNode, reward: float):
-        while node is not None:
-            node.visits += 1
-            node.value += reward
-            node = node.parent
-
-    async def search(self, initial_state: str, max_iterations: int = 3) -> str:
-        logger.info(f"🌳 [L3 LATS] Initiating TRUE MCTS Search (Iterations: {max_iterations})")
-        root = MCTSNode(state=initial_state)
-
-        for i in range(max_iterations):
-            # 1. Selection
-            node = root
-            while node.children and not node.is_terminal:
-                node = max(node.children, key=lambda n: n.uct_score())
+    async def search(self, initial_state: str, max_rollouts: int = 2) -> str:
+        """Executes concurrent LATS search over the reasoning space with environment feedback."""
+        logger.info(f"🌳 [L3 LATS] Initiating Async Tree Search with Environment Grounding (Rollouts: {max_rollouts})")
+        
+        actions = await self._expand_node(initial_state, max_branches=max_rollouts)
+        
+        # Parallel Simulate (Execute Code) & Evaluate
+        eval_tasks = [self._simulate_and_evaluate(a) for a in actions]
+        evaluations = await asyncio.gather(*eval_tasks, return_exceptions=True)
+        
+        best_action = None
+        best_score = -1.0
+        
+        for action, evaluation in zip(actions, evaluations):
+            if isinstance(evaluation, Exception):
+                logger.warning(f"LATS Evaluation failed: {evaluation}")
+                continue
+                
+            logger.debug(f"Trajectory Evaluated -> Score: {evaluation.reward_score} | Terminal: {evaluation.is_terminal}")
             
-            # 2. Expansion
-            if not node.is_terminal and node.visits > 0 or node == root:
-                await self._expand(node)
-                if node.children:
-                    node = node.children[0] # Pick first for simulation
-            
-            # 3. Simulation
-            reward = await self._simulate(node)
-            
-            # 4. Backpropagation
-            self._backpropagate(node, reward)
-            logger.debug(f"MCTS Iteration {i+1} completed. Node value updated.")
-
-        # Return best trajectory
-        best_child = max(root.children, key=lambda n: n.visits if n.visits > 0 else -1, default=None)
-        if best_child:
-            logger.success(f"🌳 [L3 LATS] Selected optimal trajectory via UCT.")
-            return best_child.state
+            if evaluation.reward_score > best_score:
+                best_score = evaluation.reward_score
+                best_action = action
+                
+        if best_action:
+            logger.success(f"🌳 [L3 LATS] Selected optimal grounded trajectory with score: {best_score}")
+            return f"Reasoning: {best_action.reasoning}\nCode: {best_action.python_code_to_execute or 'None'}"
         return initial_state
