@@ -1,11 +1,11 @@
-"""ARSENAL Master Orchestrator (Neuro-Symbolic State Machine).
-
-This replaces the old pseudo-code with an actual, runnable Python 
-async event loop integrating L0-L6 dynamically.
-"""
+"""ARSENAL Master Orchestrator (Neuro-Symbolic State Machine)."""
 import asyncio
 from loguru import logger
 from arsenal_ai.core.models import TaskSpec, ArsenalConfig, ArsenalResult
+from arsenal_ai.layers.l2_conductor import MetaConductor
+from arsenal_ai.layers.l3_lats import LatsEngine
+from arsenal_ai.layers.l6_stages import AIScientistReviewer
+from arsenal_ai.memory.voyager import VoyagerMemory, VoyagerSkill
 
 class ArsenalMasterPipeline:
     """The central Nervous System of ARSENAL."""
@@ -13,39 +13,46 @@ class ArsenalMasterPipeline:
     def __init__(self, config: ArsenalConfig):
         self.config = config
         self.trace = []
-        
-    async def _l0_route(self, task: TaskSpec) -> dict:
-        """L0 Technique Router."""
-        logger.info(f"[L0] Analyzing routing for {task.modality.value} task...")
-        self.trace.append({"layer": "L0", "action": "routing complete"})
-        return {"l1": True, "l2": True, "l3": True, "l4": True}
-        
-    async def _l1_optimize(self, task: TaskSpec) -> str:
-        """L1 OPRO Optimizer."""
-        logger.info("[L1] Optimizing instruction via Meta-Prompting...")
-        return "Optimized instructions for downstream layers."
-        
-    async def _l2_conduct(self, task: TaskSpec, instruction: str) -> dict:
-        """L2 Asynchronous Conductor."""
-        logger.info("[L2] Dispatching experts concurrently...")
-        await asyncio.sleep(0.1) # Mock async latency
-        return {"expert_1": "data", "expert_2": "data"}
+        self.conductor = MetaConductor(config)
+        self.lats = LatsEngine(config)
+        self.scientist = AIScientistReviewer(config)
+        self.memory = VoyagerMemory()
 
     async def execute(self, task: TaskSpec) -> ArsenalResult:
-        """Runs the fully integrated pipeline."""
+        """Runs the fully integrated SOTA pipeline."""
         logger.info(f"🚀 ARSENAL IGNITED for Task: {task.task_id}")
         
-        route = await self._l0_route(task)
+        # 1. Voyager Memory (Retrieve prior skills)
+        skills = self.memory.retrieve_skills(task.description)
+        skill_context = "\n".join([s.executable_code for s in skills]) if skills else "No prior skills."
+        self.trace.append({"layer": "L5", "action": f"Retrieved {len(skills)} skills"})
         
-        instruction = await self._l1_optimize(task) if route.get("l1") else ""
+        # 2. Conductor (Meta-Prompting / Dispatch)
+        expert_bundle = await self.conductor.conduct(task)
+        self.trace.append({"layer": "L2", "action": "Experts dispatched and aggregated"})
         
-        experts_data = await self._l2_conduct(task, instruction) if route.get("l2") else {}
+        # 3. LATS Search (Deep Reasoning)
+        initial_state = f"Task: {task.description}\nExpert Insights: {str(expert_bundle)[:500]}"
+        best_thought = await self.lats.search(initial_state, max_rollouts=3)
+        self.trace.append({"layer": "L3", "action": "LATS Search resolved"})
         
-        logger.info("[L6] Finalizing Artifacts...")
+        # 4. AI Scientist Review (Crystallization)
+        review = await self.scientist.produce_artifact(task, expert_bundle, best_thought)
+        self.trace.append({"layer": "L6", "action": f"Verdict: {review.final_decision}"})
+        
+        # Optionally save new skills to Voyager
+        if review.soundness_score > 0.8:
+            self.memory.save_skill(VoyagerSkill(
+                name=f"skill_{task.task_id}", 
+                description=task.description, 
+                executable_code=review.academic_summary
+            ))
+        
+        logger.info("✅ ARSENAL Pipeline Execution Completed Successfully.")
         return ArsenalResult(
             task_id=task.task_id,
-            final_artifact="Crystallized Output",
-            tokens_consumed=1250,
+            final_artifact=review.academic_summary,
+            tokens_consumed=0, # In a full prod version, hook this to litellm cost tracking
             execution_trace=self.trace,
-            peer_review_score=0.95
+            peer_review_score=review.soundness_score
         )
