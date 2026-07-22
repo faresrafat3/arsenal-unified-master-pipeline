@@ -2,6 +2,8 @@
 import asyncio
 from loguru import logger
 from arsenal_ai.core.models import TaskSpec, ArsenalConfig, ArsenalResult
+from arsenal_ai.layers.l0_router import TaxonomyRouter
+from arsenal_ai.layers.l1_optimizer import InstructionOptimizer
 from arsenal_ai.layers.l2_conductor import MetaConductor
 from arsenal_ai.layers.l3_lats import LatsEngine
 from arsenal_ai.layers.l6_stages import AIScientistReviewer
@@ -13,6 +15,8 @@ class ArsenalMasterPipeline:
     def __init__(self, config: ArsenalConfig):
         self.config = config
         self.trace = []
+                self.router = TaxonomyRouter(config)
+        self.optimizer = InstructionOptimizer(config)
         self.conductor = MetaConductor(config)
         self.lats = LatsEngine(config)
         self.scientist = AIScientistReviewer(config)
@@ -24,10 +28,23 @@ class ArsenalMasterPipeline:
         
         # 1. Voyager Memory (Retrieve prior skills)
         skills = self.memory.retrieve_skills(task.description)
-        skill_context = "\n".join([s.executable_code for s in skills]) if skills else "No prior skills."
+        skill_context = "
+".join([s.executable_code for s in skills]) if skills else "No prior skills."
         self.trace.append({"layer": "L5", "action": f"Retrieved {len(skills)} skills"})
         
-        # 2. Conductor (Meta-Prompting / Dispatch)
+        # 2. L0 Taxonomy Router
+        route_decision = await self.router.route(task)
+        self.trace.append({"layer": "L0", "action": "Routing established"})
+        
+        # 3. L1 Optimizer
+        optimized_instruction = await self.optimizer.optimize(task, route_decision.recommended_families)
+        self.trace.append({"layer": "L1", "action": "Instruction optimized"})
+        
+        # Pass the optimized instruction to the conductor, not the raw task description
+        # We temporarily mutate the task description for downstream layers
+        task.description = optimized_instruction.optimized_instruction
+        
+        # 4. Conductor (Meta-Prompting / Dispatch)# 2. Conductor (Meta-Prompting / Dispatch)
         expert_bundle = await self.conductor.conduct(task)
         self.trace.append({"layer": "L2", "action": "Experts dispatched and aggregated"})
         
