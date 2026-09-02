@@ -4,7 +4,7 @@
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB.svg?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Production_Ready-brightgreen.svg?style=for-the-badge)](#)
+[![Status](https://img.shields.io/badge/Status-Alpha%20%2F%20v1.0.0--rc1-yellow.svg?style=for-the-badge)](#)
 
 **A**utomatic **R**easoning, **S**earch, **E**valuation, **N**avigation, and **A**daptive **L**earning
 
@@ -16,7 +16,9 @@
 
 ## 🌟 The 2026 SOTA Transformation
 
-ARSENAL is no longer just a theoretical framework or a collection of prompts. It is a **fully executable Python package** powered by `LiteLLM`, `Instructor`, `ChromaDB`, and `AsyncIO`. It actively enforces determinism, runs python code in sandboxes, and dynamically routes LLM execution for maximum cognitive economy.
+ARSENAL unifies 10 SOTA LLM agent frameworks into a single neuro-symbolic architecture (L0–L6). The repository ships **module skeletons** (Python source under `arsenal_ai/`) plus full architecture docs, prompts, and Mermaid graphs.
+
+**Status:** ⚠️ This is an **architecture reference**, not yet an installable runtime. The source files exist but `__init__.py` markers and a CLI entrypoint (`arsenal_ai/cli.py`) are not yet in place — `pip install -e .` will fail until they are added. See `python_logic_inventory.json` for the intended module surface.
 
 ### 🔥 Architectural Highlights (L0 - L6)
 
@@ -45,15 +47,15 @@ We extracted the core logic, prompts, and flows from the top 10 LLM agent framew
 | 9 | **ReAct** | L2/Tools: Code execution, error observation, and correction |
 | 10| **Prompt Report** | L0: Taxonomy-based architectural routing |
 
-## 🚀 Getting Started
+## 🚀 Getting Started (intended usage)
 
-ARSENAL is designed to be imported as the reasoning engine for your downstream SaaS or Research platforms (e.g., `epistemic-forge`).
+**Note:** the package is not yet pip-installable — see the status note above. The snippets below show the intended API.
 
 ```bash
-# 1. Install the package
-pip install -e .
+# 1. (Future) install the package
+# pip install -e .
 
-# 2. Run a full execution (Requires OPENAI_API_KEY or OPENROUTER_API_KEY)
+# 2. (Future) Run a full execution (Requires OPENAI_API_KEY or OPENROUTER_API_KEY)
 export OPENAI_API_KEY="your-key-here"
 ```
 
