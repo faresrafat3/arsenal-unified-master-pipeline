@@ -43,9 +43,7 @@ class MetaConductor:
         
         messages = [
             {"role": "system", "content": f"You are a specialized expert: {call.expert_name}. Obey the conductor's instructions. If the task involves code or math, you MUST write python_code_to_execute. The system will run it and give you the output."},
-            {"role": "user", "content": f"Context: {context}
-
-Task: {call.instruction}"}
+            {"role": "user", "content": f"Context: {context}\n\nTask: {call.instruction}"}
         ]
         
         try:
@@ -73,11 +71,8 @@ Task: {call.instruction}"}
                     execution_logs = sandbox_result["error"]
                     # Step 3: Self-Correction Loop (One attempt to fix based on traceback)
                     correction_messages = messages + [
-                        {"role": "assistant", "content": f"I tried running this code:
-{action.python_code_to_execute}"},
-                        {"role": "user", "content": f"The execution FAILED with this traceback:
-{execution_logs}
-Fix the code and output the corrected version."}
+                        {"role": "assistant", "content": f"I tried running this code:\n{action.python_code_to_execute}"},
+                        {"role": "user", "content": f"The execution FAILED with this traceback:\n{execution_logs}\nFix the code and output the corrected version."}
                     ]
                     correction_action: ExecutableAction = await agenerate_structured(
                         messages=correction_messages, response_model=ExecutableAction,
@@ -104,7 +99,9 @@ Fix the code and output the corrected version."}
             
         except Exception as e:
             logger.warning(f"Expert {call.expert_name} crashed: {e}")
-            return {"expert": call.expert_name, "error": str(e)}    async def conduct(self, task: TaskSpec) -> Dict[str, Any]:
+            return {"expert": call.expert_name, "error": str(e)}
+
+    async def conduct(self, task: TaskSpec) -> Dict[str, Any]:
         """The main Meta-Prompting entry point."""
         logger.info(f"🎼 [L2 Conductor] Analyzing task to draft Meta-Prompting plan...")
         
