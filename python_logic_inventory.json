@@ -307,6 +307,9 @@
     "L6.multi_seed_plots_writeup_review"
   ],
   "stop_conditions": {
+    "L0": [
+      "single_pass_async_no_iteration"
+    ],
     "L4": [
       "max_iters",
       "stop_phrase",
