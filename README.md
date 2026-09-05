@@ -18,7 +18,7 @@
 
 ARSENAL unifies 10 SOTA LLM agent frameworks into a single neuro-symbolic architecture (L0–L6). The repository ships **module skeletons** (Python source under `arsenal_ai/`) plus full architecture docs, prompts, and Mermaid graphs.
 
-**Status:** ⚠️ This is an **architecture reference**, not yet an installable runtime. The source files exist but `__init__.py` markers and a CLI entrypoint (`arsenal_ai/cli.py`) are not yet in place — `pip install -e .` will fail until they are added. See `python_logic_inventory.json` for the intended module surface.
+**Status:** ⚠️ This is an **architecture reference**, not yet an installable runtime. The source modules exist under `arsenal_ai/` (all 7 subdirs have `__init__.py`), but a CLI entrypoint (`arsenal_ai/cli.py`) is not yet in place — `pip install -e .` will fail until it's added. See `python_logic_inventory.json` for the intended module surface. (Verified 2026-09-04 round 71: 14 actual code modules across layers/, memory/, domains/, core/, engine/, tools/, router/.)
 
 ### 🔥 Architectural Highlights (L0 - L6)
 
